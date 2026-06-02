@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "description": "Generate a simple app architecture from user intent",
+    "input": {"goal": "build AI-driven app", "features": ["chat", "analytics"]}
+  }
+]
