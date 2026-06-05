@@ -170,18 +170,19 @@ __TABLES_LIST__
 
 CRUD_PAGE_TEMPLATE = """
 function __NAME__Page() {
+  const API_URL = "__API_URL__";
   const [items, setItems] = useState([]);
-  const [newItem, setNewItem] = useState({ __FIELDS_STATE__ });
-
   useEffect(() => {
-    fetch("http://localhost:8001/__API_PATH__")
+    fetch(API_URL)
       .then(res => res.json())
-      .then(data => setItems(data));
+      .then(data => setItems(data))
+      .catch(err => console.error(err));
   }, []);
+  const [newItem, setNewItem] = useState({ __FIELDS_STATE__ });
 
   const handleAdd = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8001/__API_PATH__", {
+    fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -319,6 +320,10 @@ def generate_react_app(schemas: dict) -> str:
                     break
             
             if table_match:
+                api_url = (
+                    f"http://localhost:8001/"
+                    f"{table_match['name']}"
+                )
                 fields = table_match.get("fields", ["id"])
                 input_fields = [f for f in fields if f not in ["id", "password", "role"]]
                 if not input_fields:
@@ -368,6 +373,7 @@ def generate_react_app(schemas: dict) -> str:
                 singular_name = name[:-1] if name.endswith('s') else name
                 
                 p_code = CRUD_PAGE_TEMPLATE.replace("__NAME__", name)\
+                                           .replace("__API_URL__", api_url)\
                                            .replace("__API_PATH__", table_match.get("name", ""))\
                                            .replace("__FIELDS_STATE__", fields_state)\
                                            .replace("__TABLE_HEADERS__", headers_str)\

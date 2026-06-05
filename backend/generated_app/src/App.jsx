@@ -1,9 +1,11 @@
 // Auto-generated React Application
 // Configured Schemas:
 // Table: users, Fields: id, email, password, role
-// Table: contacts, Fields: id, name, phone
+// Table: products, Fields: id, name, price, stock
+// Table: managements, Fields: id, name, description
 // Endpoint: POST /login
-// Endpoint: GET /contacts
+// Endpoint: GET /products
+// Endpoint: GET /managements
 // Role: admin, Permissions: full_access
 // Role: user, Permissions: basic_access
 
@@ -68,63 +70,20 @@ function AuthPage() {
 }
 
 
-function DashboardPage() {
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-extrabold text-slate-800">Dashboard Overview</h2>
-        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Live System</span>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-white rounded-2xl shadow-sm border border-slate-100">
-          <div className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Database Tables</div>
-          <div className="text-3xl font-bold text-slate-800 mt-2">2</div>
-          <div className="text-xs text-slate-500 mt-2">Active tables configured</div>
-        </div>
-        <div className="p-6 bg-white rounded-2xl shadow-sm border border-slate-100">
-          <div className="text-slate-400 text-sm font-semibold uppercase tracking-wider">API Endpoints</div>
-          <div className="text-3xl font-bold text-slate-800 mt-2">2</div>
-          <div className="text-xs text-slate-500 mt-2">RESTful interfaces active</div>
-        </div>
-        <div className="p-6 bg-white rounded-2xl shadow-sm border border-slate-100">
-          <div className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Auth Roles</div>
-          <div className="text-3xl font-bold text-slate-800 mt-2">2</div>
-          <div className="text-xs text-slate-500 mt-2">Defined permission levels</div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-        <h3 className="text-lg font-bold text-slate-800 mb-4">Application Structure</h3>
-        <div className="space-y-3 text-sm text-slate-600">
-          <p>This is a compiled application based on your custom configuration schemas.</p>
-          <div className="p-4 bg-slate-50 rounded-xl">
-            <h4 className="font-semibold text-slate-700 mb-2">Available Tables & Schemas</h4>
-            <ul className="list-disc pl-5 space-y-1">
-              <li><strong>users</strong>: id, email, password, role</li>
-              <li><strong>contacts</strong>: id, name, phone</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-function ContactsPage() {
+function ManagementsPage() {
+  const API_URL = "http://localhost:8001/managements";
   const [items, setItems] = useState([]);
-  const [newItem, setNewItem] = useState({ name: '', phone: '' });
-
   useEffect(() => {
-    fetch("http://localhost:8001/contacts")
+    fetch(API_URL)
       .then(res => res.json())
-      .then(data => setItems(data));
+      .then(data => setItems(data))
+      .catch(err => console.error(err));
   }, []);
+  const [newItem, setNewItem] = useState({ name: '', description: '' });
 
   const handleAdd = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8001/contacts", {
+    fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -134,14 +93,14 @@ function ContactsPage() {
       .then(res => res.json())
       .then(created => {
         setItems([...items, created]);
-        setNewItem({ name: '', phone: '' });
+        setNewItem({ name: '', description: '' });
       });
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-extrabold text-slate-800">Contacts Management</h2>
+        <h2 className="text-3xl font-extrabold text-slate-800">Managements Management</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -153,7 +112,7 @@ function ContactsPage() {
                 <tr className="border-b border-slate-150 bg-slate-50 text-slate-500 text-xs font-semibold uppercase">
                   <th className='p-3'>ID</th>
                   <th className='p-3'>NAME</th>
-                  <th className='p-3'>PHONE</th>
+                  <th className='p-3'>DESCRIPTION</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
@@ -161,7 +120,7 @@ function ContactsPage() {
                   <tr key={item.id} className="hover:bg-slate-50">
                     <td className='p-3'>{item.id}</td>
                     <td className='p-3'>{item.name}</td>
-                    <td className='p-3'>{item.phone}</td>
+                    <td className='p-3'>{item.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -170,7 +129,7 @@ function ContactsPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-fit">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">Add New Contact</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Add New Management</h3>
           <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1">Name</label>
@@ -183,13 +142,117 @@ function ContactsPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Phone</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Description</label>
             <input 
               type="text" 
-              value={newItem.phone} 
-              onChange={e => setNewItem({...newItem, phone: e.target.value})} 
+              value={newItem.description} 
+              onChange={e => setNewItem({...newItem, description: e.target.value})} 
               className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" 
-              placeholder="Enter phone..."
+              placeholder="Enter description..."
+            />
+          </div>
+            <button type="submit" className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition">
+              Create
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function ProductsPage() {
+  const API_URL = "http://localhost:8001/products";
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => setItems(data))
+      .catch(err => console.error(err));
+  }, []);
+  const [newItem, setNewItem] = useState({ name: '', price: '', stock: '' });
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+    fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newItem)
+    })
+      .then(res => res.json())
+      .then(created => {
+        setItems([...items, created]);
+        setNewItem({ name: '', price: '', stock: '' });
+      });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-extrabold text-slate-800">Products Management</h2>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Items List</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-slate-650">
+              <thead>
+                <tr className="border-b border-slate-150 bg-slate-50 text-slate-500 text-xs font-semibold uppercase">
+                  <th className='p-3'>ID</th>
+                  <th className='p-3'>NAME</th>
+                  <th className='p-3'>PRICE</th>
+                  <th className='p-3'>STOCK</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
+                {items.map(item => (
+                  <tr key={item.id} className="hover:bg-slate-50">
+                    <td className='p-3'>{item.id}</td>
+                    <td className='p-3'>{item.name}</td>
+                    <td className='p-3'>{item.price}</td>
+                    <td className='p-3'>{item.stock}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-fit">
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Add New Product</h3>
+          <form onSubmit={handleAdd} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Name</label>
+            <input 
+              type="text" 
+              value={newItem.name} 
+              onChange={e => setNewItem({...newItem, name: e.target.value})} 
+              className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+              placeholder="Enter name..."
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Price</label>
+            <input 
+              type="text" 
+              value={newItem.price} 
+              onChange={e => setNewItem({...newItem, price: e.target.value})} 
+              className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+              placeholder="Enter price..."
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Stock</label>
+            <input 
+              type="text" 
+              value={newItem.stock} 
+              onChange={e => setNewItem({...newItem, stock: e.target.value})} 
+              className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+              placeholder="Enter stock..."
             />
           </div>
             <button type="submit" className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition">
@@ -221,8 +284,8 @@ export default function GeneratedApp() {
     switch (currentPage) {
       case 'Login': return <LoginPage onLogin={handleLogin} />;
       case 'Auth': return <AuthPage />;
-      case 'Dashboard': return <DashboardPage />;
-      case 'Contacts': return <ContactsPage />;
+      case 'Managements': return <ManagementsPage />;
+      case 'Products': return <ProductsPage />;
       default: return <div className="p-6">Page not found</div>;
     }
   };
@@ -258,24 +321,24 @@ export default function GeneratedApp() {
               Auth
             </button>
             <button
-              onClick={() => setCurrentPage('Dashboard')}
+              onClick={() => setCurrentPage('Managements')}
               className={`w-full text-left py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
-                currentPage === 'Dashboard' 
+                currentPage === 'Managements' 
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
                   : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
               }`}
             >
-              Dashboard
+              Managements
             </button>
             <button
-              onClick={() => setCurrentPage('Contacts')}
+              onClick={() => setCurrentPage('Products')}
               className={`w-full text-left py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
-                currentPage === 'Contacts' 
+                currentPage === 'Products' 
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
                   : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
               }`}
             >
-              Contacts
+              Products
             </button>
           </nav>
         </div>
