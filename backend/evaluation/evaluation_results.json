@@ -1,0 +1,8 @@
+{
+    "total_prompts": 20,
+    "successful": 20,
+    "failed": 0,
+    "success_rate": 100.0,
+    "repair_count": 3,
+    "avg_latency_ms": 0.028061866760253906
+}

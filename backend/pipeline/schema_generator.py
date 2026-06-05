@@ -14,14 +14,25 @@ def generate_schemas(intent, architecture):
         ]
     }
 
-    if "contacts" in intent.entities:
+    for entity in intent.entities:
+        if entity == "users":
+            continue
+        
+        fields = ["id"]
+        if entity == "contacts":
+            fields.extend(["name", "phone"])
+        elif entity == "products":
+            fields.extend(["name", "price", "stock"])
+        elif entity == "orders":
+            fields.extend(["customer", "total", "status"])
+        elif entity == "tasks":
+            fields.extend(["title", "description", "completed"])
+        else:
+            fields.extend(["name", "description"])
+            
         database["tables"].append({
-            "name": "contacts",
-            "fields": [
-                "id",
-                "name",
-                "phone"
-            ]
+            "name": entity,
+            "fields": fields
         })
 
     api = {
@@ -33,9 +44,11 @@ def generate_schemas(intent, architecture):
         ]
     }
 
-    if "contacts" in intent.entities:
+    for entity in intent.entities:
+        if entity == "users":
+            continue
         api["endpoints"].append({
-            "path": "/contacts",
+            "path": f"/{entity}",
             "method": "GET"
         })
 
@@ -48,9 +61,11 @@ def generate_schemas(intent, architecture):
     }
 
     for module in architecture["modules"]:
-        ui["pages"].append({
-            "name": module.title()
-        })
+        page_name = module.title()
+        if not any(p["name"] == page_name for p in ui["pages"]):
+            ui["pages"].append({
+                "name": page_name
+            })
 
     auth = {
         "roles": [

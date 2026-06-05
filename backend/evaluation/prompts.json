@@ -1,7 +1,83 @@
 [
   {
-    "id": 1,
-    "description": "Generate a simple app architecture from user intent",
-    "input": {"goal": "build AI-driven app", "features": ["chat", "analytics"]}
+    "type": "normal",
+    "prompt": "Build CRM with contacts and dashboard"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build ecommerce platform with payments"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build hospital management system"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build school management system"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build inventory management system"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build HRMS with employee roles"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build project management tool"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build learning management system"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build customer support portal"
+  },
+  {
+    "type": "normal",
+    "prompt": "Build event management application"
+  },
+
+  {
+    "type": "edge",
+    "prompt": "Build something useful"
+  },
+  {
+    "type": "edge",
+    "prompt": "Create an app"
+  },
+  {
+    "type": "edge",
+    "prompt": "Admin can edit users but nobody can edit users"
+  },
+  {
+    "type": "edge",
+    "prompt": "Add payments and remove payments"
+  },
+  {
+    "type": "edge",
+    "prompt": "Dashboard only"
+  },
+  {
+    "type": "edge",
+    "prompt": "Build CRM"
+  },
+  {
+    "type": "edge",
+    "prompt": "Everything should be public and private"
+  },
+  {
+    "type": "edge",
+    "prompt": "Use contacts without storing contacts"
+  },
+  {
+    "type": "edge",
+    "prompt": "Build system"
+  },
+  {
+    "type": "edge",
+    "prompt": "No users but login required"
   }
 ]

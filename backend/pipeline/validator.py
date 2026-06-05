@@ -1,29 +1,95 @@
-def validate_schemas(schemas):
+def validate_module_pages(architecture, schemas):
 
     errors = []
 
-    database = schemas["database"]
-    api = schemas["api"]
-    ui = schemas["ui"]
-    auth = schemas["auth"]
+    modules = architecture["modules"]
 
-    # Rule 1
-    if len(database["tables"]) == 0:
-        errors.append("No database tables found")
+    pages = [
+        page["name"].lower()
+        for page in schemas["ui"]["pages"]
+    ]
 
-    # Rule 2
-    if len(api["endpoints"]) == 0:
-        errors.append("No API endpoints found")
+    ignored_modules = ["auth"]
 
-    # Rule 3
-    if len(ui["pages"]) == 0:
-        errors.append("No UI pages found")
+    for module in modules:
 
-    # Rule 4
-    roles = [r["name"] for r in auth["roles"]]
+        if module.lower() in ignored_modules:
+            continue
+
+        if module.lower() not in pages:
+            errors.append(
+                f"Missing UI page for module: {module}"
+            )
+
+    return errors
+
+
+def validate_entity_apis(intent, schemas):
+
+    errors = []
+
+    endpoints = [
+        endpoint["path"]
+        for endpoint in schemas["api"]["endpoints"]
+    ]
+
+    for entity in intent.entities:
+
+        expected = f"/{entity}"
+
+        if expected not in endpoints:
+            errors.append(
+                f"Missing API endpoint: {expected}"
+            )
+
+    return errors
+
+
+def validate_roles(schemas):
+
+    errors = []
+
+    roles = [
+        role["name"]
+        for role in schemas["auth"]["roles"]
+    ]
 
     if "admin" not in roles:
-        errors.append("Admin role missing")
+        errors.append(
+            "Admin role missing"
+        )
+
+    if "user" not in roles:
+        errors.append(
+            "User role missing"
+        )
+
+    return errors
+
+
+def validate_schemas(intent, architecture, schemas):
+
+    errors = []
+
+    errors.extend(
+        validate_module_pages(
+            architecture,
+            schemas
+        )
+    )
+
+    errors.extend(
+        validate_entity_apis(
+            intent,
+            schemas
+        )
+    )
+
+    errors.extend(
+        validate_roles(
+            schemas
+        )
+    )
 
     return {
         "valid": len(errors) == 0,
