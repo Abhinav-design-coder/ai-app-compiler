@@ -6,7 +6,7 @@ TEMPLATE = """// Auto-generated React Application
 // Configured Schemas:
 __METADATA__
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 __PAGE_COMPONENTS__
 
@@ -170,14 +170,29 @@ __TABLES_LIST__
 
 CRUD_PAGE_TEMPLATE = """
 function __NAME__Page() {
-  const [items, setItems] = useState(__MOCK_ITEMS__);
+  const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState({ __FIELDS_STATE__ });
+
+  useEffect(() => {
+    fetch("http://localhost:8001/__API_PATH__")
+      .then(res => res.json())
+      .then(data => setItems(data));
+  }, []);
 
   const handleAdd = (e) => {
     e.preventDefault();
-    const id = items.length ? Math.max(...items.map(i => i.id)) + 1 : 1;
-    setItems([...items, { id, ...newItem }]);
-    setNewItem({ __FIELDS_STATE__ });
+    fetch("http://localhost:8001/__API_PATH__", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newItem)
+    })
+      .then(res => res.json())
+      .then(created => {
+        setItems([...items, created]);
+        setNewItem({ __FIELDS_STATE__ });
+      });
   };
 
   return (
@@ -353,7 +368,7 @@ def generate_react_app(schemas: dict) -> str:
                 singular_name = name[:-1] if name.endswith('s') else name
                 
                 p_code = CRUD_PAGE_TEMPLATE.replace("__NAME__", name)\
-                                           .replace("__MOCK_ITEMS__", json.dumps(mock_items))\
+                                           .replace("__API_PATH__", table_match.get("name", ""))\
                                            .replace("__FIELDS_STATE__", fields_state)\
                                            .replace("__TABLE_HEADERS__", headers_str)\
                                            .replace("__TABLE_CELLS__", cells_str)\

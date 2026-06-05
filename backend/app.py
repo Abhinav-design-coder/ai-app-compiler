@@ -10,6 +10,7 @@ from pipeline.repair_engine import repair_schemas
 from pipeline.runtime_simulator import simulate_runtime
 from pipeline.code_generator import generate_react_app
 from pipeline.api_generator import generate_fastapi_routes
+from pipeline.server_generator import generate_fastapi_server
 
 class CompileRequest(BaseModel):
     prompt: str
@@ -65,6 +66,8 @@ def compile_app(request: CompileRequest):
     )
 
     generate_fastapi_routes(schemas)
+
+    generate_fastapi_server(schemas)
 
     return {
         "intent": intent.model_dump(),
